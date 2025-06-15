@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import com.instana.sdk.support.SpanSupport;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -19,20 +18,10 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import java.util.Random;
-
 @SpringBootApplication
 @EnableRetry
 @EnableWebMvc
 public class ShippingServiceApplication implements WebMvcConfigurer {
-
-    private static final String[] DATA_CENTERS = {
-            "asia-northeast2",
-            "asia-south1",
-            "europe-west3",
-            "us-east1",
-            "us-west1"
-    };
 
     public static void main(String[] args) {
         SpringApplication.run(ShippingServiceApplication.class, args);
@@ -48,7 +37,7 @@ public class ShippingServiceApplication implements WebMvcConfigurer {
         @Override
         public Object postProcessBeforeInitialization(Object bean, String name) throws BeansException {
             if (bean instanceof DataSource) {
-                bean = new RetryableDataSource((DataSource)bean);
+                bean = new RetryableDataSource((DataSource) bean);
             }
             return bean;
         }
@@ -61,16 +50,9 @@ public class ShippingServiceApplication implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new InstanaDatacenterTagInterceptor());
+        registry.addInterceptor(new DatacenterTagInterceptor());
     }
 
-    private static class InstanaDatacenterTagInterceptor extends HandlerInterceptorAdapter {
+    private static class DatacenterTagInterceptor extends HandlerInterceptorAdapter {
         @Override
-        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
-            SpanSupport.annotate("datacenter", DATA_CENTERS[new Random().nextInt(DATA_CENTERS.length)]);
-
-            return super.preHandle(request, response, handler);
-        }
-    }
-}
+        public boolean preHandl
