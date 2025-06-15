@@ -55,4 +55,10 @@ public class ShippingServiceApplication implements WebMvcConfigurer {
 
     private static class DatacenterTagInterceptor extends HandlerInterceptorAdapter {
         @Override
-        public boolean preHandl
+        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+                throws Exception {
+            // Add any logic you want here, or leave as-is
+            return super.preHandle(request, response, handler);
+        }
+    }
+}
